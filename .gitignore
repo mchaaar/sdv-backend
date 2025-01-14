@@ -3,3 +3,4 @@ node_modules/
 logs/access.log
 logs/error.log
 logs/info.log
+package-lock.json
