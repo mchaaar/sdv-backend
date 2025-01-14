@@ -1,0 +1,47 @@
+2025-01-14T10:22:11.879Z - INFO: Attempting to create a user with email: john.doe@example.com
+2025-01-14T10:22:11.955Z - INFO: User successfully created with ID: 67863ad38ba40bd9a985fd67
+2025-01-14T10:23:06.595Z - INFO: Attempting to log in with email: john.doe@example.com
+2025-01-14T10:23:06.642Z - INFO: User successfully logged in with ID: 67863ad38ba40bd9a985fd67
+2025-01-14T10:24:18.756Z - INFO: Attempting to create a user with email: testuser@example.com
+2025-01-14T10:24:18.809Z - INFO: User successfully created with ID: 67863b528ba40bd9a985fd6b
+2025-01-14T10:26:09.111Z - INFO: Attempting to log in with email: testuser@example.com
+2025-01-14T10:26:09.151Z - INFO: User successfully logged in with ID: 67863b528ba40bd9a985fd6b
+2025-01-14T10:27:34.832Z - INFO: Attempting to create an article with title: Introduction to Node.js
+2025-01-14T10:27:34.891Z - INFO: Article successfully created with ID: 67863c1692011e7feb501c63
+2025-01-14T10:27:42.645Z - INFO: Fetching all articles from the database
+2025-01-14T10:27:42.674Z - INFO: Fetched 1 articles
+2025-01-14T10:28:53.541Z - INFO: Attempting to create a user with email: testuser@example.com
+2025-01-14T10:29:45.398Z - INFO: Attempting to create a user with email: testuser@example.com
+2025-01-14T10:29:45.490Z - INFO: User successfully created with ID: 67863c9992011e7feb501c68
+2025-01-14T10:29:55.911Z - INFO: Attempting to log in with email: testuser@example.com
+2025-01-14T10:29:55.940Z - INFO: User successfully logged in with ID: 67863c9992011e7feb501c68
+2025-01-14T10:30:19.744Z - INFO: Attempting to delete user with ID: 67863c9992011e7feb501c68
+2025-01-14T10:30:19.777Z - INFO: User successfully deleted with ID: 67863c9992011e7feb501c68
+2025-01-14T10:30:26.709Z - INFO: Attempting to create a user with email: testuser@example.com
+2025-01-14T10:30:26.761Z - INFO: User successfully created with ID: 67863cc292011e7feb501c6d
+2025-01-14T10:30:39.076Z - INFO: Attempting to update user with ID: 67863c9992011e7feb501c68
+2025-01-14T10:30:48.118Z - INFO: Attempting to update user with ID: 67863cc292011e7feb501c6d
+2025-01-14T10:30:48.150Z - INFO: User successfully updated with ID: 67863cc292011e7feb501c6d
+2025-01-14T10:30:56.818Z - INFO: Fetching all users from the database
+2025-01-14T10:30:56.834Z - INFO: Fetched 1 users
+2025-01-14T10:31:04.779Z - INFO: Fetching user with ID: 67863cc292011e7feb501c6d
+2025-01-14T10:31:15.571Z - INFO: Attempting to create an article with title: Introduction to Node.js
+2025-01-14T10:31:15.599Z - INFO: Article successfully created with ID: 67863cf392011e7feb501c73
+2025-01-14T10:41:27.279Z - INFO: Attempting to create an article with title: Introduction to Node.js
+2025-01-14T10:42:06.135Z - INFO: Attempting to create an article with title: Introduction to Node.js
+2025-01-14T10:42:06.140Z - INFO: Article successfully initialized
+2025-01-14T10:42:06.174Z - INFO: Article successfully created with ID: 67863f7e633290f99aa85d46
+2025-01-14T10:42:11.493Z - INFO: Fetching all articles from the database
+2025-01-14T10:42:11.520Z - INFO: Fetched 1 articles
+2025-01-14T10:42:15.257Z - INFO: Attempting to create an article with title: Introduction to Node.js
+2025-01-14T10:42:15.258Z - INFO: Article successfully initialized
+2025-01-14T10:42:15.314Z - INFO: Article successfully created with ID: 67863f87633290f99aa85d49
+2025-01-14T10:42:19.566Z - INFO: Fetching all articles from the database
+2025-01-14T10:42:19.621Z - INFO: Fetched 2 articles
+2025-01-14T10:42:29.809Z - INFO: Fetching article with ID: 67863f7e633290f99aa85d46
+2025-01-14T10:42:36.154Z - INFO: Attempting to update article with ID: 67863f7e633290f99aa85d46
+2025-01-14T10:42:36.191Z - INFO: Article successfully updated with ID: 67863f7e633290f99aa85d46
+2025-01-14T10:42:48.415Z - INFO: Attempting to delete article with ID: 67863f87633290f99aa85d49
+2025-01-14T10:42:48.462Z - INFO: Article successfully deleted with ID: 67863f87633290f99aa85d49
+2025-01-14T10:51:03.850Z - INFO: Attempting to update user with ID: 67863cc292011e7feb501c6d
+2025-01-14T10:51:03.874Z - INFO: User successfully updated with ID: 67863cc292011e7feb501c6d
