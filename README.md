@@ -14,14 +14,18 @@ git clone git@github.com:mchaaar/sdv-backend.git
 Create a .env file at the root of the project and add the following keys:
 ```
 MONGO_URL_LEFT='mongodb+srv://'
-MONGO_URL_RIGHT='@cluster0.xruot.mongodb.net/'
+MONGO_URL_RIGHT=''
 MONGO_USERNAME=''
 MONGO_PASSWORD=''
 ```
 
 ## 3 - Fill the values
 
-Fill the missing MONGO_USERNAME & MONGO_PASSWORD values with your own MongoDB ones.
+Fill the missing MONGO_USERNAME MONGO_PASSWORD and MONGO_URL_RIGHT values with your own MongoDB ones.
+
+You can find your own MONGO_URL_RIGHT value in the cluster section -> connect
+
+![cluster connection infos](https://github.com/mchaaar/sdv-backend/blob/master/cluster.png)
 
 ## 4 - Install and run
 
