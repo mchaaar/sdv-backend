@@ -38,3 +38,12 @@ Then to start the api, you simply need to do
 ```
 npm run dev
 ```
+
+### If you have an error regarding tsx install/at the start after typing npm run dev :
+```
+npm install -g tsx
+```
+then restart with
+```
+npm run dev
+```
