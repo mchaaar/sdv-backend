@@ -4,15 +4,20 @@ import { UserDTO } from '../dto/user.dto';
 import { UserPresenter } from '../presenters/user.presenter';
 import {
   createUser,
-  loginUser,
   getAllUsers,
   getUserById,
   updateUser,
   deleteUser,
 } from '../services/userService';
 
+import { authenticateToken } from '../middlewares/authMiddleware';
 import bcrypt from 'bcryptjs';
-import { generateAccessToken, generateRefreshToken, verifyRefreshToken } from '../utils/jwt';
+import {
+  generateAccessToken,
+  generateRefreshToken,
+  verifyRefreshToken,
+  verifyAccessToken,
+} from '../utils/jwt';
 import { handleValidationErrors } from '../utils/validation';
 import userRepository from '../repositories/userRepository';
 
@@ -22,7 +27,9 @@ userRouter.post(
   '/register',
   [
     body('email').isEmail().withMessage('Valid email is required'),
-    body('password').isLength({ min: 6 }).withMessage('Password must be at least 6 characters long'),
+    body('password')
+      .isLength({ min: 6 })
+      .withMessage('Password must be at least 6 characters long'),
     body('name').notEmpty().withMessage('Name is required'),
     handleValidationErrors,
   ],
@@ -42,12 +49,12 @@ userRouter.post(
         refreshToken,
         data: UserPresenter.present(user),
       });
-    } catch (error: any) {
+    } catch (error: unknown) {
+      const err = error as Error;
       res.status(500).json({
         message: 'Error registering user',
-        error: error.message,
+        error: err.message,
       });
-      return;
     }
   }
 );
@@ -67,10 +74,98 @@ userRouter.post(
         res.status(404).json({ message: 'User not found' });
         return;
       }
-      res.status(200).json({ message: 'Login successful' });
-    } catch (error) {
-      res.status(500).json({ message: 'Internal Server Error' });
+
+      const isPasswordValid = await bcrypt.compare(password, user.password);
+      if (!isPasswordValid) {
+        res.status(401).json({ message: 'Invalid credentials' });
+        return;
+      }
+
+      const accessToken = generateAccessToken(user);
+      const refreshToken = generateRefreshToken(user);
+
+      res
+        .status(200)
+        .setHeader('Authorization', `Bearer ${accessToken}`)
+        .json({
+          message: 'Login successful',
+          refreshToken,
+        });
+    } catch (error: unknown) {
+      const err = error as Error;
+      res.status(500).json({ message: 'Internal Server Error', error: err.message });
+    }
+  }
+);
+
+userRouter.get(
+  '/me',
+  authenticateToken,
+  async (req: Request, res: Response): Promise<void> => {
+    try {
+      const token = req.headers.authorization?.split(' ')[1];
+      if (!token) {
+        res.status(401).json({ message: 'No token provided' });
+        return;
+      }
+
+      const decoded: any = verifyAccessToken(token);
+      const user = await userRepository.findUserById(decoded.id);
+
+      if (!user) {
+        res.status(404).json({ message: 'User not found' });
+        return;
+      }
+
+      res.status(200).json({
+        message: 'User information retrieved successfully',
+        data: {
+          id: user._id,
+          name: user.name,
+          email: user.email,
+          createdAt: user.createdAt,
+        },
+      });
+    } catch (error: unknown) {
+      const err = error as Error;
+      res.status(500).json({
+        message: 'Error retrieving user information',
+        error: err.message,
+      });
+    }
+  }
+);
+
+userRouter.post(
+  '/refresh-token',
+  async (req: Request, res: Response): Promise<void> => {
+    const refreshToken = req.headers['refresh-token'] as string;
+
+    if (!refreshToken) {
+      res.status(401).json({ message: 'No refresh token provided in headers' });
       return;
+    }
+
+    try {
+      const decoded: any = verifyRefreshToken(refreshToken);
+      const user = await userRepository.findUserById(decoded.id);
+
+      if (!user) {
+        res.status(404).json({ message: 'User not found' });
+        return;
+      }
+
+      const newAccessToken = generateAccessToken(user);
+      const newRefreshToken = generateRefreshToken(user);
+
+      res.status(200).json({
+        message: 'Token refreshed successfully',
+        accessToken: newAccessToken,
+        refreshToken: newRefreshToken,
+      });
+    } catch (error: unknown) {
+      const err = error as Error;
+      res.status(403).json({ message: 'Invalid or expired refresh token', error: err.message });
     }
   }
 );
@@ -82,12 +177,12 @@ userRouter.get('/', async (req: Request, res: Response): Promise<void> => {
       message: 'List of all users',
       data: users.map(UserPresenter.present),
     });
-  } catch (error: any) {
+  } catch (error: unknown) {
+    const err = error as Error;
     res.status(500).json({
       message: 'Error fetching users',
-      error: error.message,
+      error: err.message,
     });
-    return;
   }
 });
 
@@ -107,12 +202,12 @@ userRouter.get(
         message: 'User retrieved successfully',
         data: UserPresenter.present(user),
       });
-    } catch (error: any) {
+    } catch (error: unknown) {
+      const err = error as Error;
       res.status(500).json({
         message: 'Error fetching user',
-        error: error.message,
+        error: err.message,
       });
-      return;
     }
   }
 );
@@ -122,7 +217,10 @@ userRouter.put(
   [
     param('id').isMongoId().withMessage('Invalid user ID format'),
     body('email').optional().isEmail().withMessage('Valid email is required'),
-    body('password').optional().isLength({ min: 6 }).withMessage('Password must be at least 6 characters long'),
+    body('password')
+      .optional()
+      .isLength({ min: 6 })
+      .withMessage('Password must be at least 6 characters long'),
     body('name').optional().notEmpty().withMessage('Name cannot be empty'),
   ],
   async (req: Request, res: Response): Promise<void> => {
@@ -138,12 +236,12 @@ userRouter.put(
         message: 'User updated successfully',
         data: UserPresenter.present(updatedUser),
       });
-    } catch (error: any) {
+    } catch (error: unknown) {
+      const err = error as Error;
       res.status(500).json({
         message: 'Error updating user',
-        error: error.message,
+        error: err.message,
       });
-      return;
     }
   }
 );
@@ -161,33 +259,12 @@ userRouter.delete(
       }
 
       res.status(200).json({ message: 'User deleted successfully' });
-    } catch (error: any) {
+    } catch (error: unknown) {
+      const err = error as Error;
       res.status(500).json({
         message: 'Error deleting user',
-        error: error.message,
+        error: err.message,
       });
-      return;
-    }
-  }
-);
-
-userRouter.post(
-  '/refresh-token',
-  async (req: Request, res: Response): Promise<void> => {
-    const { refreshToken } = req.body;
-
-    if (!refreshToken) {
-      res.status(401).json({ message: 'No refresh token provided' });
-      return;
-    }
-
-    try {
-      const decoded = verifyRefreshToken(refreshToken);
-      const newAccessToken = generateAccessToken(decoded);
-      res.status(200).json({ accessToken: newAccessToken });
-    } catch (error) {
-      res.status(403).json({ message: 'Invalid or expired refresh token' });
-      return;
     }
   }
 );
