@@ -5,7 +5,6 @@ import { requestLogger, devLogger } from './services/loggerService.js';
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
 import fs from 'fs';
-import path from 'path';
 
 dotenv.config();
 const app = express();
@@ -15,11 +14,12 @@ if (!fs.existsSync('logs')) {
   fs.mkdirSync('logs');
 }
 
-const mongoUrl = process.env.MONGO_URL_LEFT
-  + process.env.MONGO_USERNAME
-  + ':'
-  + process.env.MONGO_PASSWORD
-  + process.env.MONGO_URL_RIGHT
+const mongoUrl =
+  process.env.MONGO_URL_LEFT! +
+  process.env.MONGO_USERNAME! +
+  ':' +
+  process.env.MONGO_PASSWORD! +
+  process.env.MONGO_URL_RIGHT!
 ;
 
 mongoose.connect(mongoUrl)
