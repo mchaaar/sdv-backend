@@ -9,19 +9,18 @@ import {
   updateArticle,
   deleteArticle,
 } from '../services/articleService';
+import { authenticateToken } from '../middlewares/authMiddleware';
 
 export const articleRouter = express.Router();
 
-/**
- * Create a new article
- */
 articleRouter.post(
   '/',
+  authenticateToken,
   [
     body('title').notEmpty().withMessage('Title is required'),
     body('content').notEmpty().withMessage('Content is required'),
   ],
-  async (req: Request, res: Response) => {
+  async (req: Request, res: Response): Promise<void> => {
     try {
       const articleDTO = new ArticleDTO(req.body);
       const article = await createArticle(articleDTO);
@@ -39,10 +38,7 @@ articleRouter.post(
   }
 );
 
-/**
- * Get all articles
- */
-articleRouter.get('/', async (req: Request, res: Response) => {
+articleRouter.get('/', async (req: Request, res: Response): Promise<void> => {
   try {
     const articles = await getAllArticles();
 
@@ -58,13 +54,10 @@ articleRouter.get('/', async (req: Request, res: Response) => {
   }
 });
 
-/**
- * Get a specific article by ID
- */
 articleRouter.get(
   '/:id',
   [param('id').isMongoId().withMessage('Invalid article ID format')],
-  async (req: Request, res: Response) => {
+  async (req: Request, res: Response): Promise<void> => {
     try {
       const article = await getArticleById(req.params.id);
 
@@ -88,17 +81,15 @@ articleRouter.get(
   }
 );
 
-/**
- * Update an article by ID
- */
 articleRouter.put(
   '/:id',
+  authenticateToken,
   [
     param('id').isMongoId().withMessage('Invalid article ID format'),
     body('title').optional().notEmpty().withMessage('Title cannot be empty'),
     body('content').optional().notEmpty().withMessage('Content cannot be empty'),
   ],
-  async (req: Request, res: Response) => {
+  async (req: Request, res: Response): Promise<void> => {
     try {
       const updatedArticle = await updateArticle(req.params.id, req.body);
 
@@ -122,13 +113,11 @@ articleRouter.put(
   }
 );
 
-/**
- * Delete an article by ID
- */
 articleRouter.delete(
   '/:id',
+  authenticateToken,
   [param('id').isMongoId().withMessage('Invalid article ID format')],
-  async (req: Request, res: Response) => {
+  async (req: Request, res: Response): Promise<void> => {
     try {
       const deletedArticle = await deleteArticle(req.params.id);
 
